@@ -8,10 +8,10 @@
 #ifndef SENDPAGE_H_
 #define SENDPAGE_H_
 
-//
+// Sends the Status Page
 int SendStatusPage();
 
-//
+// Sends the Error Page
 int SendErrorPage();
 
 #endif /* SENDPAGE_H_ */
