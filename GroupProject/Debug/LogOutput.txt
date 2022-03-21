@@ -1,0 +1,10 @@
+Mon Mar 21 08:17:24 2022
+Opening a server on port 35000
+Mon Mar 21 08:17:24 2022
+Starting the server
+Mon Mar 21 08:17:24 2022
+The server has exited with a -1
+Mon Mar 21 08:17:24 2022
+Result: -1
+Mon Mar 21 08:17:24 2022
+Opening the socket
