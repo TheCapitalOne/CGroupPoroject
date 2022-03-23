@@ -284,3 +284,48 @@ int SendErrorPage( int clientfd ){
 
 		return ( 0 );
 }
+
+int SendDirPage( int clientfd ){
+
+	FILE    *LogFile;
+
+		// opens a new file
+		LogFile = fopen( "LogOutput.txt", "a" );
+
+		//checks for success
+		if ( NULL == LogFile )
+		{
+			perror( "File not opened\n" );
+			return(1);
+		}
+
+		//init the timer
+			time_t timer;
+			timer=time(NULL);
+
+	// declare variables to use
+		char    buffer[65535];
+
+		// initialize the buffer
+		memset( buffer, 0, sizeof( buffer ) );
+
+		strcpy( buffer, "HTTP/1.1 200 OK\r\n"
+						"Server: DJC_ZNB_WEB v1.0\r\n"
+						"Content-Type: text/html\r\n"
+						"\r\n"
+						"<html>"
+						"<head><title>System Status</title></head>"
+						"<body><h2>Directory Page</h2>"
+						"\n"
+				);
+
+		int bytes_written = write( clientfd, buffer, strlen( buffer ) );
+
+		//bytes written for the page
+		fprintf(LogFile, "%sBytes Written: %d\n", asctime(localtime(&timer)), bytes_written);
+
+		//close log file
+		fclose(LogFile);
+
+		return ( 0 );
+}
