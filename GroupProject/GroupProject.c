@@ -33,8 +33,9 @@ int main(int argc, char **argv) {
 
 	//check if enough arguments were entered
 	if (argc < 2){
+		fprintf(LogFile, "WARNING!: Command line argument not given\n");
 		perror("WARNING!: Command line argument not given\n");
-		exit(1);
+		return(1);
 	}
 
 	//init the port number from argument
