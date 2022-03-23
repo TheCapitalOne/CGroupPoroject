@@ -14,4 +14,7 @@ int SendStatusPage();
 // Sends the Error Page
 int SendErrorPage();
 
+// Sends the Directory Page
+int SendDirPage();
+
 #endif /* SENDPAGE_H_ */
