@@ -73,7 +73,7 @@ int OpenSocket(int portnum){
 			if (result == -1)
 			{
 				fprintf(LogFile, "%sListening Socket can not be created\n", asctime(localtime(&timer)));
-				fprintf(stderr, "%sListening Socket can not be created\n");
+				fprintf(stderr, "Listening Socket can not be created\n");
 				return(-1);
 			}
 
