@@ -135,6 +135,13 @@ int RunServer(int portnum)
 				int result = SendStatusPage( clientfd );
 				fprintf(LogFile, "%sSendStatusPage return: %d\n", asctime(localtime(&timer)), result );
 			}
+			else if (( strncmp( buffer, "GET ", 4 ) == 0 ) &&
+				( strncmp( buffer + 3, " /dir ", 6 ) == 0 ))
+				{
+				// send back the Directory page
+				int result = SendDirPage( clientfd );
+				fprintf(LogFile, "%sSendDirPage return: %d\n", asctime(localtime(&timer)), result );
+			}
 			else {
 				// send back the error page
 				int result = SendErrorPage( clientfd );
