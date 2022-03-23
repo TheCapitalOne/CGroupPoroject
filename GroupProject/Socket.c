@@ -57,7 +57,7 @@ int OpenSocket(int portnum){
 			if (result == -1)
 			{
 				fprintf(LogFile, "%sServer can not be created\n", asctime(localtime(&timer)));
-				fprintf(stderr, "%sServer can not be created\n", asctime(localtime(&timer)));
+				fprintf(stderr, "Server can not be created\n", asctime(localtime(&timer)));
 				return(-1);
 			}
 
