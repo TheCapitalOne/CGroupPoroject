@@ -285,7 +285,7 @@ int SendErrorPage( int clientfd ){
 		return ( 0 );
 }
 
-int SendDirPage( int clientfd ){
+int SendDirPage( int clientfd, char bufPath[] ){
 
 	FILE    *LogFile;
 
@@ -309,13 +309,43 @@ int SendDirPage( int clientfd ){
 		// initialize the buffer
 		memset( buffer, 0, sizeof( buffer ) );
 
+		//init dir path
+		char dirPath[200] = "/data";
+		strcat( dirPath, bufPath);
+
+		//directory stuff
+		struct dirent **namelist;
+		int n = scandir(dirPath, &namelist, NULL, alphasort);
+
+		//begin page contents
 		strcpy( buffer, "HTTP/1.1 200 OK\r\n"
 						"Server: DJC_ZNB_WEB v1.0\r\n"
 						"Content-Type: text/html\r\n"
 						"\r\n"
 						"<html>"
-						"<head><title>System Status</title></head>"
+						"<head><title>System Files</title></head>"
 						"<body><h2>Directory Page</h2>"
+						"<p>"
+				);
+
+		//check if scandir worked
+		if (n == -1) {
+			perror("scandir");
+			strcat( buffer, dirPath);
+		} else {
+		//loop prints directory contents to page
+		while (n--) {
+			strcat( buffer, namelist[n]->d_name);
+			strcat( buffer, "</p><p>");
+			free(namelist[n]);
+		}
+		free(namelist);
+		}
+
+		//ends page
+		strcat( buffer, "</p>"
+						"</body>"
+						"</html>"
 						"\n"
 				);
 
