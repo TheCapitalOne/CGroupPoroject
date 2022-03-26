@@ -23,6 +23,11 @@
 #include <sys/utsname.h>
 #include <sys/sysinfo.h>
 
+//directory includes
+#include <dirent.h>
+#include <sys/types.h>
+
+
 int SendStatusPage( int clientfd )
 {
 	FILE    *LogFile;
@@ -63,6 +68,7 @@ int SendStatusPage( int clientfd )
 
 
 	char buffer[65535];
+							//PAHWeb was marked in feedback, probably wrong
 	strcpy( buffer, "HTTP/1.1 200 OK\r\n"
 					"Server: DJC_ZNB_WEB v1.0\r\n"
 					"Content-Type: text/html\r\n"
@@ -269,6 +275,7 @@ int SendErrorPage( int clientfd ){
 						"<head><title>Error Page</title></head>"
 						"<body><h2>ERROR!</h2></body>"
 						"<p>Add /status to the URL to reach the status page</p>"
+						"<p>Add /dir/pathtodirectory to the URL to reach the directory page"
 						"</html>"
 						"\n"
 				);
@@ -302,59 +309,62 @@ int SendDirPage( int clientfd, char bufPath[] ){
 			time_t timer;
 			timer=time(NULL);
 
-	// declare variables to use
-		char    buffer[65535];
+			// declare variables to use
+					char    buffer[65535];
 
-		// initialize the buffer
-		memset( buffer, 0, sizeof( buffer ) );
+					// initialize the buffer
+					memset( buffer, 0, sizeof( buffer ) );
 
-		//init dir path
-		char dirPath[200] = "/data";
-		strcat( dirPath, bufPath);
+					//init dir path
+					char dirPath[200] = "/data";
+					strcat( dirPath, bufPath);
 
-		//directory stuff
-		struct dirent **namelist;
-		int n = scandir(dirPath, &namelist, NULL, alphasort);
+					//directory stuff
+					struct dirent **namelist;
+					int name = scandir(dirPath, &namelist, NULL, alphasort);
+					//begin page contents
+					strcpy( buffer, "HTTP/1.1 200 OK\r\n"
+									"Server: DJC_ZNB_WEB v1.0\r\n"
+									"Content-Type: text/html\r\n"
+									"\r\n"
+									"<html>"
+									"<head><title>System Files</title></head>"
+									"<body><h2>Directory Page</h2>"
+									"<p>"
+							);
 
-		//begin page contents
-		strcpy( buffer, "HTTP/1.1 200 OK\r\n"
-						"Server: DJC_ZNB_WEB v1.0\r\n"
-						"Content-Type: text/html\r\n"
-						"\r\n"
-						"<html>"
-						"<head><title>System Files</title></head>"
-						"<body><h2>Directory Page</h2>"
-						"<p>"
-				);
+					//check if scandir worked
+					if (name == -1) {
+						perror("scandir");
+						strcat( buffer, "Error: Directory not found");
+					} else {
+					fprintf(LogFile, "%sDirectories Made: %d\n", asctime(localtime(&timer)), name);
+					//loop prints directory contents to page
+					while (name--) {
 
-		//check if scandir worked
-		if (n == -1) {
-			perror("scandir");
-			strcat( buffer, dirPath);
-		} else {
-		//loop prints directory contents to page
-		while (n--) {
-			strcat( buffer, namelist[n]->d_name);
-			strcat( buffer, "</p><p>");
-			free(namelist[n]);
-		}
-		free(namelist);
-		}
+						strcat( buffer, namelist[name]->d_name);
+						strcat( buffer, "</a></p><p>");
+						free(namelist[name]);
 
-		//ends page
-		strcat( buffer, "</p>"
-						"</body>"
-						"</html>"
-						"\n"
-				);
+					}
+					free(namelist);
+					}
 
-		int bytes_written = write( clientfd, buffer, strlen( buffer ) );
+					//ends page
+					strcat( buffer, "</p>"
+									"</body>"
+									"</html>"
+									"\n"
+							);
 
-		//bytes written for the page
-		fprintf(LogFile, "%sBytes Written: %d\n", asctime(localtime(&timer)), bytes_written);
+					//generate the bytes written for the page
+					int bytes_written = write( clientfd, buffer, strlen( buffer ) );
 
-		//close log file
-		fclose(LogFile);
+					//print bytes written for the page to log
+					fprintf(LogFile, "%sBytes Written: %d\n", asctime(localtime(&timer)), bytes_written);
 
-		return ( 0 );
-}
+					//close log file
+					fclose(LogFile);
+
+					return ( 0 );
+			}
