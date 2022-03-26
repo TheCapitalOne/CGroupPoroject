@@ -63,7 +63,6 @@ int SendStatusPage( int clientfd )
 
 
 	char buffer[65535];
-							//PAHWeb was marked in feedback, probably wrong
 	strcpy( buffer, "HTTP/1.1 200 OK\r\n"
 					"Server: DJC_ZNB_WEB v1.0\r\n"
 					"Content-Type: text/html\r\n"
